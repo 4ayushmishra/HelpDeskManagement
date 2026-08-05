@@ -1,0 +1,33 @@
+@model TicketViewModel
+@{
+    ViewData["Title"] = "Edit Ticket";
+}
+
+<h1>Edit Ticket</h1>
+
+<form asp-controller="Tickets" asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="RaisedBy" />
+    <input type="hidden" asp-for="CreatedDate" />
+
+    <label asp-for="Title"></label>
+    <input asp-for="Title" />
+    <span asp-validation-for="Title" class="text-danger"></span>
+
+    <label asp-for="Description"></label>
+    <textarea asp-for="Description" rows="4"></textarea>
+
+    <label asp-for="Priority"></label>
+    <select asp-for="Priority" asp-items="ViewBag.Priorities"></select>
+    <span asp-validation-for="Priority" class="text-danger"></span>
+
+    <label asp-for="Status"></label>
+    <select asp-for="Status" asp-items="ViewBag.Statuses"></select>
+    <span asp-validation-for="Status" class="text-danger"></span>
+
+    <p style="margin-top: 16px;">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index">Cancel</a>
+    </p>
+</form>

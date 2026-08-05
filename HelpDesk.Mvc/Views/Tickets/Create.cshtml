@@ -1,0 +1,35 @@
+@model TicketViewModel
+@{
+    ViewData["Title"] = "Raise New Ticket";
+}
+
+<h1>Raise New Ticket</h1>
+
+<form asp-controller="Tickets" asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <label asp-for="Title"></label>
+    <input asp-for="Title" />
+    <span asp-validation-for="Title" class="text-danger"></span>
+
+    <label asp-for="Description"></label>
+    <textarea asp-for="Description" rows="4"></textarea>
+
+    <label asp-for="Priority"></label>
+    <select asp-for="Priority" asp-items="ViewBag.Priorities">
+        <option value="">-- Select Priority --</option>
+    </select>
+    <span asp-validation-for="Priority" class="text-danger"></span>
+
+    <label asp-for="RaisedBy"></label>
+    <input asp-for="RaisedBy" />
+    <span asp-validation-for="RaisedBy" class="text-danger"></span>
+
+    <!-- Status is hardcoded to "Open" for new tickets and not shown as an editable field -->
+    <input type="hidden" asp-for="Status" value="Open" />
+
+    <p style="margin-top: 16px;">
+        <button type="submit" class="btn btn-primary">Submit Ticket</button>
+        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index">Cancel</a>
+    </p>
+</form>

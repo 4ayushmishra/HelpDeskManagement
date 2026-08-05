@@ -1,0 +1,23 @@
+@model TicketViewModel
+@{
+    ViewData["Title"] = "Ticket Details";
+}
+
+<h1>Ticket Details</h1>
+
+<table>
+    <tbody>
+        <tr><th>Id</th><td>@Model.Id</td></tr>
+        <tr><th>Title</th><td>@Model.Title</td></tr>
+        <tr><th>Description</th><td>@Model.Description</td></tr>
+        <tr><th>Priority</th><td>@Model.Priority</td></tr>
+        <tr><th>Status</th><td>@Model.Status</td></tr>
+        <tr><th>Raised By</th><td>@Model.RaisedBy</td></tr>
+        <tr><th>Created Date</th><td>@Model.CreatedDate.ToString("dd-MMM-yyyy HH:mm")</td></tr>
+    </tbody>
+</table>
+
+<p style="margin-top: 16px;">
+    <a class="btn btn-primary" asp-controller="Tickets" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Index">Back to List</a>
+</p>

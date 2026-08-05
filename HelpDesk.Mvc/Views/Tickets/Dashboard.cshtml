@@ -1,0 +1,28 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1>Dashboard</h1>
+
+<div class="cards">
+    <div class="card">
+        <h2>@Model.TotalTickets</h2>
+        <p>Total Tickets</p>
+    </div>
+    <div class="card">
+        <h2>@Model.OpenTickets</h2>
+        <p>Open Tickets</p>
+    </div>
+    <div class="card">
+        <h2>@Model.InProgressTickets</h2>
+        <p>In Progress Tickets</p>
+    </div>
+    <div class="card">
+        <h2>@Model.ClosedTickets</h2>
+        <p>Closed Tickets</p>
+    </div>
+</div>
+
+<a class="btn btn-primary" asp-controller="Tickets" asp-action="Index">View All Tickets</a>
+<a class="btn btn-secondary" asp-controller="Tickets" asp-action="Create">Raise New Ticket</a>

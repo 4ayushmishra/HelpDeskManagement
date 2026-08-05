@@ -1,0 +1,58 @@
+@model FilterByStatusViewModel
+@{
+    ViewData["Title"] = "Filter Tickets by Status";
+}
+
+<h1>Filter Tickets by Status</h1>
+
+<form asp-controller="Tickets" asp-action="FilterByStatus" method="get">
+    <label for="status">Status</label>
+    <select name="status" id="status" asp-items="ViewBag.Statuses" onchange="this.form.submit()">
+        <option value="">-- Select Status --</option>
+    </select>
+    <noscript>
+        <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Filter</button>
+    </noscript>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(Model.SelectedStatus))
+{
+    <h2 style="margin-top: 24px;">Results for "@Model.SelectedStatus"</h2>
+
+    @if (Model.Tickets == null || Model.Tickets.Count == 0)
+    {
+        <p>No tickets found for this status.</p>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Raised By</th>
+                    <th>Created Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var ticket in Model.Tickets)
+            {
+                <tr>
+                    <td>@ticket.Id</td>
+                    <td>@ticket.Title</td>
+                    <td>@ticket.Priority</td>
+                    <td>@ticket.Status</td>
+                    <td>@ticket.RaisedBy</td>
+                    <td>@ticket.CreatedDate.ToString("dd-MMM-yyyy")</td>
+                    <td>
+                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">View</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}

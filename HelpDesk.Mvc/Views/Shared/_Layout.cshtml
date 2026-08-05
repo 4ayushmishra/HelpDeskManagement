@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HelpDesk Management</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a class="navbar-brand" asp-controller="Tickets" asp-action="Dashboard">HelpDesk Management</a>
+            <ul class="navbar-links">
+                <li><a asp-controller="Tickets" asp-action="Dashboard">Dashboard</a></li>
+                <li><a asp-controller="Tickets" asp-action="Index">All Tickets</a></li>
+                <li><a asp-controller="Tickets" asp-action="Create">Raise New Ticket</a></li>
+                <li><a asp-controller="Tickets" asp-action="FilterByStatus">Filter by Status</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <p>&copy; @DateTime.Now.Year - HelpDesk Management</p>
+    </footer>
+</body>
+</html>
