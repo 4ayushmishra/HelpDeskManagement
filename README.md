@@ -1,102 +1,72 @@
 # HelpDeskManagement
 
-Help Desk Ticket Management System built using ASP.NET Core Web API, ASP.NET Core MVC,
-Entity Framework Core, SQL Server, xUnit, Moq and GitHub.
+Help Desk Ticket Management System built using **ASP.NET Core Web API**, **ASP.NET Core MVC**, **Entity Framework Core**, **SQL Server**, **xUnit** and **Moq**.
 
-## Repository Structure
+---
 
-```
-HelpDeskManagement/
-├── HelpDeskManagement.sln
-├── README.md
-├── .gitignore
-├── HelpDesk.Api/           # Part 1 - ASP.NET Core Web API
-├── HelpDesk.Mvc/           # Part 2 - ASP.NET Core MVC
-└── HelpDesk.Tests/         # Part 3 - xUnit + Moq
+##  Solution Overview
+
+The **Help Desk Ticket Management System** is a solution designed to handle IT and employee support requests efficiently. It consists of three primary projects:
+
+| Project Name | Project Type | Purpose |
+| :--- | :--- | :--- |
+| `HelpDesk.Api` | ASP.NET Core Web API | Implements REST APIs, Entity Framework Core, SQL Server database integration, and Repository Pattern. |
+| `HelpDesk.Mvc` | ASP.NET Core Web MVC | Consumes the Web API through an asynchronous `HttpClient` Service Layer (`TicketService`). |
+| `HelpDesk.Tests` | xUnit Test Project | Unit testing for `TicketsController` endpoints using **Moq** to mock the repository layer. |
+
+---
+
+## 🛠️ Data Model — `Ticket`
+
+```csharp
+public class Ticket
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string Priority { get; set; } // Valid: Low, Medium, High
+    public string Status { get; set; }   // Valid: Open, In Progress, Closed
+    public string RaisedBy { get; set; }
+    public DateTime CreatedDate { get; set; }
+}
 ```
 
 ---
 
-## Part 1 — HelpDesk.Api (Web API)
+##  Web API Endpoints (`HelpDesk.Api`)
 
-ASP.NET Core Web API using EF Core + SQL Server with the Repository Pattern.
+The API exposes the following REST endpoints via `TicketsController`:
 
-- `Models/Ticket.cs`
-- `Data/AppDbContext.cs`
-- `Repositories/ITicketRepository.cs`, `Repositories/TicketRepository.cs`
-- `Controllers/TicketsController.cs`
-
-### Endpoints
-
-| Method | Route                        | Description                  |
-|--------|-------------------------------|-------------------------------|
-| GET    | /api/tickets                  | Get all tickets               |
-| GET    | /api/tickets/{id}              | Get a ticket by Id             |
-| GET    | /api/tickets/status/{status}   | Get tickets filtered by status |
-| POST   | /api/tickets                  | Create a new ticket            |
-| PUT    | /api/tickets/{id}              | Update an existing ticket      |
-| DELETE | /api/tickets/{id}              | Delete a ticket                |
-
-### Setup
-
-```bash
-cd HelpDesk.Api
-dotnet restore
-```
-
-Update `appsettings.json` → `ConnectionStrings:DefaultConnection` to your SQL Server instance, then:
-
-```bash
-dotnet tool install --global dotnet-ef   # once, if not already installed
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-dotnet run
-```
-
-Swagger UI: `https://localhost:7050/swagger`
+| HTTP Method | Endpoint URL | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/tickets` | Get all tickets |
+| `GET` | `/api/tickets/{id}` | Get ticket by ID |
+| `GET` | `/api/tickets/status/{status}` | Get all tickets filtered by status (`Open`, `In Progress`, `Closed`) |
+| `POST` | `/api/tickets` | Create a new ticket |
+| `PUT` | `/api/tickets/{id}` | Update an existing ticket |
+| `DELETE` | `/api/tickets/{id}` | Delete a ticket |
 
 ---
 
-## Part 2 — HelpDesk.Mvc (MVC Application)
+##  MVC Application Features (`HelpDesk.Mvc`)
 
-ASP.NET Core MVC app that talks to the API **only** through a Service Layer (`Services/TicketService.cs`,
-via `HttpClient`). Controllers never touch the database directly.
+- **Dashboard:** Displays ticket statistics (Total, Open, In Progress, Closed).
+- **View All Tickets:** Displays all support requests in a table.
+- **View Ticket Details:** View complete details for a selected ticket.
+- **Raise New Ticket:** Create form where Status is hardcoded to `Open` and Priority is selected via dropdown.
+- **Edit Ticket:** Update Title, Description, Priority (dropdown), and Status (dropdown: `Open`, `In Progress`, `Closed`).
+- **Delete Ticket:** Delete confirmation and execution.
+- **Filter Tickets by Status:** Select status via dropdown to filter results into a table.
 
-### Features
-
-- **Dashboard** — Total / Open / In Progress / Closed ticket counts
-- **View All Tickets** — table of all tickets
-- **View Ticket Details** — full info for one ticket
-- **Raise New Ticket** — Status hardcoded to `Open`, Priority chosen via dropdown
-- **Edit Ticket** — update Title, Description, Priority (dropdown), Status (dropdown)
-- **Delete Ticket**
-- **Filter Tickets by Status** — dropdown of `Open` / `In Progress` / `Closed`, results shown in a table
-
-### Setup
-
-```bash
-cd HelpDesk.Mvc
-dotnet restore
-```
-
-Update `appsettings.json` → `ApiSettings:BaseUrl` to match wherever `HelpDesk.Api` is running
-(default assumes `https://localhost:7050/`), then:
-
-```bash
-dotnet run
-```
-
-> Run `HelpDesk.Api` first (or alongside), since the MVC app depends on it for all ticket data.
+All MVC controllers talk **only** to the Service Layer (`TicketService`, via `HttpClient`) — there is no direct database access anywhere in this project.
 
 ---
 
-## Part 3 — HelpDesk.Tests (xUnit + Moq)
+##  Unit Tests (`HelpDesk.Tests`)
 
-Unit tests for `TicketsController` (`HelpDesk.Api`). The repository (`ITicketRepository`) is fully
-mocked with Moq — **no test connects to SQL Server**.
+12 unit test cases implemented using **xUnit** and **Moq**, covering `TicketsController` with the repository fully mocked (no test connects to SQL Server):
 
-### Mandatory test cases (implemented)
-
+**Mandatory (6):**
 1. `GetAllTickets_ReturnsOkResult_WhenTicketsExist`
 2. `GetTicketById_ReturnsOkResult_WhenTicketExists`
 3. `GetTicketById_ReturnsNotFound_WhenTicketDoesNotExist`
@@ -104,8 +74,7 @@ mocked with Moq — **no test connects to SQL Server**.
 5. `CreateTicket_ReturnsBadRequest_WhenTicketIsNull`
 6. `GetTicketsByStatus_ReturnsOkResult_WhenMatchingTicketsExist`
 
-### Optional test cases (also implemented)
-
+**Optional (6):**
 7. `UpdateTicket_ReturnsOkResult_WhenUpdateIsSuccessful`
 8. `UpdateTicket_ReturnsNotFound_WhenTicketDoesNotExist`
 9. `DeleteTicket_ReturnsOkResult_WhenTicketIsDeletedSuccessfully`
@@ -113,44 +82,57 @@ mocked with Moq — **no test connects to SQL Server**.
 11. `GetAllTickets_ReturnsEmptyList_WhenNoTicketsExist`
 12. `GetTicketsByStatus_ReturnsEmptyList_WhenNoMatchingTicketsExist`
 
-### Run tests
+### Running Unit Tests
 
 ```bash
-cd HelpDesk.Tests
-dotnet restore
-dotnet test
+dotnet test HelpDesk.Tests/HelpDesk.Tests.csproj
 ```
 
 ---
 
-## Part 4 — Git & GitHub
+##  How to Run the Application
 
-```bash
-git init
-git add .
-git commit -m "Initial Commit"
+1. **Configure the database.** Update `ConnectionStrings:DefaultConnection` in `HelpDesk.Api/appsettings.json` to point to your SQL Server instance, then apply migrations:
+   ```bash
+   cd HelpDesk.Api
+   dotnet ef migrations add InitialCreate
+   dotnet ef database update
+   ```
 
-# Create a new empty repository on GitHub named HelpDeskManagement (don't initialize with README)
+2. **Start the Web API (`HelpDesk.Api`):**
+   ```bash
+   dotnet run --project HelpDesk.Api/HelpDesk.Api.csproj
+   ```
+   Note the HTTPS URL printed in the console (e.g. `https://localhost:7050`).
 
-git remote add origin <repository-url>
-git push -u origin master
-```
+3. **Point the MVC app at the API.** Update `ApiSettings:BaseUrl` in `HelpDesk.Mvc/appsettings.json` to match the URL from step 2.
 
-`.gitignore` excludes `bin/`, `obj/`, and `.vs/` (plus a few other common build/IDE artifacts).
+4. **Start the MVC Web App (`HelpDesk.Mvc`):**
+   ```bash
+   dotnet run --project HelpDesk.Mvc/HelpDesk.Mvc.csproj
+   ```
+
+5. Open your browser and navigate to the URL shown in the console (e.g. `https://localhost:7060/`) to access the Help Desk Dashboard.
 
 ---
 
-## Coding Guidelines Followed
+##  Repository Structure
+
+```
+HelpDeskManagement/
+├── HelpDeskManagement.sln
+├── README.md
+├── .gitignore
+├── HelpDesk.Api/
+├── HelpDesk.Mvc/
+└── HelpDesk.Tests/
+```
+
+##  Coding Guidelines Followed
 
 - Proper naming conventions throughout
-- Repository Pattern in the API project; Service Layer pattern in the MVC project
-- Asynchronous methods (`async`/`await`) everywhere data is fetched or persisted
-- Exception handling around repository calls in the API controller
+- Repository Pattern (API) and Service Layer pattern (MVC)
+- Asynchronous methods (`async`/`await`) for all data operations
+- Exception handling around repository calls
 - Clean, consistently indented code
 
-## Running the Full Solution Locally
-
-1. Start `HelpDesk.Api` (`dotnet run` from `HelpDesk.Api/`) — note the HTTPS port shown in the console.
-2. Make sure `HelpDesk.Mvc/appsettings.json` → `ApiSettings:BaseUrl` matches that port.
-3. Start `HelpDesk.Mvc` (`dotnet run` from `HelpDesk.Mvc/`) and browse to the Dashboard.
-4. Run `dotnet test` from `HelpDesk.Tests/` to verify all unit tests pass.
