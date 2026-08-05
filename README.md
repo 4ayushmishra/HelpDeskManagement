@@ -16,7 +16,7 @@ The **Help Desk Ticket Management System** is a solution designed to handle IT a
 
 ---
 
-## 🛠️ Data Model — `Ticket`
+##  Data Model — `Ticket`
 
 ```csharp
 public class Ticket
